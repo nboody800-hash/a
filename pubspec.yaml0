@@ -1,0 +1,43 @@
+// ─── NeuralCore Dark Theme ───────────────────────────
+
+import 'package:flutter/material.dart';
+
+class AppTheme {
+  static const Color bgDeep    = Color(0xFF080B10);
+  static const Color bgCard    = Color(0xFF0D1117);
+  static const Color bgSurface = Color(0xFF111820);
+  static const Color accentCyan = Color(0xFF00D4FF);
+  static const Color accentGreen = Color(0xFF00FF9D);
+  static const Color accentAmber = Color(0xFFFFB340);
+  static const Color accentRed   = Color(0xFFFF4560);
+  static const Color border     = Color(0xFF1E2D3D);
+
+  static ThemeData darkTheme() => ThemeData(
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: bgDeep,
+    colorScheme: const ColorScheme.dark(
+      primary: accentCyan,
+      secondary: accentGreen,
+      surface: bgCard,
+      background: bgDeep,
+    ),
+    fontFamily: 'Tajawal',
+    appBarTheme: const AppBarTheme(
+      backgroundColor: bgCard,
+      elevation: 0,
+      titleTextStyle: TextStyle(
+        fontFamily: 'Tajawal',
+        fontWeight: FontWeight.w700,
+        fontSize: 16,
+        color: Color(0xFFE8F0FE),
+      ),
+    ),
+    cardTheme: CardTheme(
+      color: bgSurface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: const BorderSide(color: border),
+      ),
+    ),
+  );
+}
