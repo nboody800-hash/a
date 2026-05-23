@@ -1,0 +1,15 @@
+name: cyber_ai_agent
+description: Autonomous AI Core Interface
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.1.0
+
+flutter:
+  uses-material-design: true
+
