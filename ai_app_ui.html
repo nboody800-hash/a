@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Control Interface — Flutter UI Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Tajawal:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg-deep:     #080B10;
+    --bg-card:     #0D1117;
+    --bg-surface:  #111820;
+    --bg-raised:   #161E28;
+    --border:      #1E2D3D;
+    --border-glow: #1A3A5C;
+    --accent-cyan: #00D4FF;
+    --accent-green:#00FF9D;
+    --accent-amber:#FFB340;
+    --accent-red:  #FF4560;
+    --text-primary:#E8F0FE;
+    --text-secondary:#7A8FA6;
+    --text-muted:  #3A4F65;
+    --user-bubble: #0A3A5A;
+    --ai-bubble:   #0D1F2D;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Tajawal', sans-serif;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  
+  body {
+    background: var(--bg-deep);
+    font-family: var(--sans);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+    overflow-x: hidden;
+  }
+
+  /* ─── HEADER ─── */
+  .page-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .page-header h1 {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.8;
+  }
+  .page-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+  .page-header p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+  }
+
+  /* ─── PHONES WRAPPER ─── */
+  .phones-row {
+    display: flex;
+    gap: 60px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .phone-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .phone-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+
+  /* ─── PHONE FRAME ─── */
+  .phone {
+    width: 320px;
+    height: 680px;
+    background: var(--bg-card);
+    border-radius: 40px;
+    border: 1.5px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(0,212,255,0.05),
+      0 30px 80px rgba(0,0,0,0.8),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  /* Notch */
+  .phone::before {
+    content:'';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100px; height: 28px;
+    background: var(--bg-deep);
+    border-radius: 0 0 20px 20px;
+    z-index: 20;
+  }
+
+  /* ─── STATUS BAR ─── */
+  .status-bar {
+    height: 44px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 24px 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-secondary);
+    position: relative;
+    z-index: 10;
+  }
+  .status-time { font-weight: 600; color: var(--text-primary); }
+  .status-icons { display: flex; gap: 4px; align-items: center; }
+  .status-icons svg { width: 14px; height: 14px; }
+
+  /* ─── APP HEADER ─── */
+  .app-header {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+    position: relative;
+  }
+  .app-header::after {
+    content:'';
+    position: absolute;
+    bottom: 0; left: 20px; right: 20px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-cyan) 40%, transparent);
+    opacity: 0.3;
+  }
+  .header-icon {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(0,255,157,0.08));
+    border: 1px solid rgba(0,212,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .header-title {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .header-sub {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent-green);
+    letter-spacing: 1.5px;
+    display: block;
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* ─── NAV TABS ─── */
+  .nav-tabs {
+    height: 40px;
+    display: flex;
+    padding: 0 16px;
+    gap: 4px;
+    align-items: center;
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-tab {
+    flex: 1;
+    height: 28px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    gap: 5px;
+  }
+  .nav-tab.active {
+    background: var(--bg-raised);
+    color: var(--accent-cyan);
+    border: 1px solid rgba(0,212,255,0.15);
+  }
+  .nav-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-green); }
+
+  /* ─────────────────────────────────── */
+  /*         CHAT SCREEN                 */
+  /* ─────────────────────────────────── */
+
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 16px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 480px;
+  }
+
+  .date-divider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0;
+  }
+  .date-divider span {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+  .date-divider::before, .date-divider::after {
+    content:''; flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .msg {
+    max-width: 82%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    animation: msgIn 0.3s ease;
+  }
+  @keyframes msgIn {
+    from { opacity:0; transform: translateY(8px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .msg.user { align-self: flex-end; align-items: flex-end; }
+  .msg.ai   { align-self: flex-start; align-items: flex-start; }
+
+  .bubble {
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    position: relative;
+  }
+  .msg.user .bubble {
+    background: var(--user-bubble);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-bottom-right-radius: 4px;
+    color: var(--text-primary);
+  }
+  .msg.ai .bubble {
+    background: var(--ai-bubble);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+    color: var(--text-primary);
+  }
+  .msg.ai .bubble::before {
+    content:'';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent-cyan), transparent);
+    opacity: 0.3;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .msg-meta {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+  .msg.ai .ai-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--mono); font-size: 9px;
+    color: var(--accent-cyan);
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .ai-pulse {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent-green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.4; transform:scale(0.7); }
+  }
+
+  .typing-bubble {
+    padding: 12px 16px;
+    display: flex; gap: 4px; align-items: center;
+  }
+  .typing-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-cyan);
+    animation: typingDot 1.4s infinite;
+    opacity: 0.4;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typingDot {
+    0%,60%,100% { opacity:0.3; transform:translateY(0); }
+    30% { opacity:1; transform:translateY(-4px); }
+  }
+
+  /* code block inside bubble */
+  .code-block {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border-glow);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent-green);
+    margin-top: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ─── CHAT INPUT ─── */
+  .chat-input-area {
+    padding: 10px 14px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-card);
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .input-box {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-family: var(--sans);
+    color: var(--text-primary);
+    resize: none;
+    min-height: 40px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-box::placeholder { color: var(--text-muted); }
+  .input-box:focus { border-color: rgba(0,212,255,0.3); }
+
+  .send-btn {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #005F88, #003D5A);
+    border: 1px solid rgba(0,212,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--accent-cyan);
+    box-shadow: 0 4px 15px rgba(0,212,255,0.1);
+    flex-shrink: 0;
+  }
+  .send-btn svg { width: 16px; height: 16px; }
+
+  .attach-btn {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+  }
+
+  /* ─────────────────────────────────── */
+  /*         DASHBOARD SCREEN            */
+  /* ─────────────────────────────────── */
+
+  .dash-body {
+    height: 520px;
+    overflow-y: auto;
+    padding: 14px 14px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Section label */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: -4px;
+  }
+
+  /* ─── METRIC CARD ─── */
+  .metric-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .metric-card::before {
+    content:'';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .metric-card.cyan::before { background: linear-gradient(90deg, var(--accent-cyan), transparent); }
+  .metric-card.green::before { background: linear-gradient(90deg, var(--accent-green), transparent); }
+  .metric-card.amber::before { background: linear-gradient(90deg, var(--accent-amber), transparent); }
+  .metric-card.red::before   { background: linear-gradient(90deg, var(--accent-red), transparent); }
+
+  .metric-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .metric-title-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .metric-icon {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+  }
+  .metric-icon.cyan { background: rgba(0,212,255,0.1); }
+  .metric-icon.green { background: rgba(0,255,157,0.1); }
+  .metric-icon.amber { background: rgba(255,179,64,0.1); }
+  .metric-icon.red   { background: rgba(255,69,96,0.1); }
+
+  .metric-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .metric-sub {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .metric-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+  .badge-green { background: rgba(0,255,157,0.1); color: var(--accent-green); border: 1px solid rgba(0,255,157,0.2); }
+  .badge-amber { background: rgba(255,179,64,0.1); color: var(--accent-amber); border: 1px solid rgba(255,179,64,0.2); }
+  .badge-cyan  { background: rgba(0,212,255,0.1);  color: var(--accent-cyan);  border: 1px solid rgba(0,212,255,0.2); }
+  .badge-red   { background: rgba(255,69,96,0.1);  color: var(--accent-red);   border: 1px solid rgba(255,69,96,0.2); }
+
+  /* Progress bar */
+  .progress-wrap {
+    margin-top: 6px;
+  }
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  .progress-labels span {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-secondary);
+  }
+  .progress-labels strong {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .progress-labels strong.cyan { color: var(--accent-cyan); }
+  .progress-labels strong.green { color: var(--accent-green); }
+  .progress-labels strong.amber { color: var(--accent-amber); }
+
+  .prog-track {
+    height: 5px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%;
+    border-radius: 10px;
+    position: relative;
+  }
+  .prog-fill::after {
+    content:'';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 3px;
+    animation: shimmer 2s infinite;
+  }
+  @keyframes shimmer {
+    0%,100% { opacity:0.5; }
+    50% { opacity:1; }
+  }
+  .prog-fill.cyan  { background: linear-gradient(90deg, #003D5A, var(--accent-cyan)); }
+  .prog-fill.green { background: linear-gradient(90deg, #003D1F, var(--accent-green)); }
+  .prog-fill.amber { background: linear-gradient(90deg, #3D2500, var(--accent-amber)); }
+
+  /* Memory breakdown */
+  .mem-segments {
+    display: flex;
+    gap: 3px;
+    margin-top: 8px;
+    height: 4px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .mem-seg { border-radius: 2px; }
+
+  .mem-legend {
+    display: flex;
+    gap: 12px;
+    margin-top: 6px;
+  }
+  .mem-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    color: var(--text-secondary);
+  }
+  .leg-dot { width: 7px; height: 7px; border-radius: 2px; }
+
+  /* Goals list */
+  .goals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .goal-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: var(--bg-raised);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .goal-priority {
+    width: 3px;
+    align-self: stretch;
+    border-radius: 2px;
+  }
+  .goal-priority.high  { background: var(--accent-red); }
+  .goal-priority.med   { background: var(--accent-amber); }
+  .goal-priority.low   { background: var(--accent-cyan); }
+
+  .goal-info { flex: 1; }
+  .goal-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+  .goal-progress-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-secondary);
+  }
+  .goal-pct {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .goal-pct.high  { color: var(--accent-red); }
+  .goal-pct.med   { color: var(--accent-amber); }
+  .goal-pct.low   { color: var(--accent-cyan); }
+
+  .mini-prog {
+    width: 80px; height: 3px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .mini-prog-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+
+  /* Processes list */
+  .process-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .process-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    background: var(--bg-raised);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .process-item::before {
+    content:'';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+  }
+  .process-item.running::before { background: var(--accent-green); }
+  .process-item.pending::before { background: var(--accent-amber); }
+  .process-item.error::before   { background: var(--accent-red); }
+
+  .process-status-icon {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+  .process-status-icon.running { background: rgba(0,255,157,0.1); }
+  .process-status-icon.pending { background: rgba(255,179,64,0.1); }
+  .process-status-icon.error   { background: rgba(255,69,96,0.1); }
+
+  .process-info { flex: 1; }
+  .process-name {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+  }
+  .process-detail {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-secondary);
+    margin-top: 1px;
+  }
+  .process-meta {
+    text-align: right;
+  }
+  .process-time {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+  }
+
+  /* Spinner animation */
+  .spin {
+    display: inline-block;
+    animation: spin 1.5s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: flex;
+    gap: 8px;
+  }
+  .stat-mini {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 10px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-mini::after {
+    content:'';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .stat-mini.s1::after { background: var(--accent-cyan); opacity: 0.4; }
+  .stat-mini.s2::after { background: var(--accent-green); opacity: 0.4; }
+  .stat-mini.s3::after { background: var(--accent-amber); opacity: 0.4; }
+
+  .stat-val {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .stat-val.cyan  { color: var(--accent-cyan); }
+  .stat-val.green { color: var(--accent-green); }
+  .stat-val.amber { color: var(--accent-amber); }
+  .stat-lbl {
+    font-size: 9px;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-top: 1px solid var(--border);
+    background: var(--bg-deep);
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+    cursor: pointer;
+    padding: 6px 0;
+    color: var(--text-muted);
+    font-size: 8px;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+  .nav-item svg { width: 18px; height: 18px; }
+  .nav-item.active { color: var(--accent-cyan); }
+  .nav-item.active svg { filter: drop-shadow(0 0 4px rgba(0,212,255,0.5)); }
+  .nav-indicator {
+    position: absolute;
+    top: 0;
+    height: 1px;
+    width: 40px;
+    background: var(--accent-cyan);
+    transition: left 0.3s;
+    box-shadow: 0 0 8px var(--accent-cyan);
+  }
+
+  /* ─── CODE SECTION (FLUTTER) ─── */
+  .code-section {
+    width: 100%;
+    max-width: 760px;
+    margin-top: 60px;
+  }
+  .code-section h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .code-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 0;
+  }
+  .code-tab {
+    padding: 7px 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+  }
+  .code-tab.active {
+    color: var(--accent-cyan);
+    background: var(--bg-surface);
+    border-color: var(--border-glow);
+  }
+  .code-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glow);
+    border-radius: 0 12px 12px 12px;
+    padding: 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .kw  { color: #569cd6; }  /* keyword */
+  .cl  { color: #4EC9B0; }  /* class */
+  .fn  { color: #DCDCAA; }  /* function */
+  .st  { color: #CE9178; }  /* string */
+  .cm  { color: #3A5A3A; }  /* comment */
+  .nm  { color: var(--accent-cyan); }  /* number / accent */
+  .pk  { color: var(--accent-amber); }  /* package */
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 3px; height: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Flutter UI Kit · Dark Theme</h1>
+  <h2>واجهة تطبيق الذكاء الاصطناعي</h2>
+  <p>تصميم مظلم احترافي — شاشة المحادثة + لوحة التحكم</p>
+</div>
+
+<div class="phones-row">
+
+  <!-- ═══════════════════════════════════ -->
+  <!--          CHAT SCREEN               -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="phone-block">
+    <span class="phone-label">● Chat Screen</span>
+    <div class="phone">
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span class="status-time">09:41</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="8" width="3" height="13" rx="1"/><rect x="7" y="5" width="3" height="16" rx="1" opacity=".7"/><rect x="12" y="2" width="3" height="19" rx="1" opacity=".4"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 6.5C5.7 1.8 18.3 1.8 23 6.5l-2.1 2.1C17.1 4.8 6.9 4.8 3.1 8.6L1 6.5z" opacity=".3"/><path d="M4.5 10C7.8 6.7 16.2 6.7 19.5 10l-2.1 2.1c-2.3-2.3-8.5-2.3-10.8 0L4.5 10z" opacity=".6"/><circle cx="12" cy="16" r="2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M20 10h2v4h-2z" opacity=".5"/></svg>
+        </div>
+      </div>
+
+      <!-- App Header -->
+      <div class="app-header">
+        <div class="header-icon">🤖</div>
+        <div style="flex:1">
+          <div class="header-title">NeuralCore AI</div>
+          <span class="header-sub">● ONLINE · v3.2.1</span>
+        </div>
+        <div class="header-actions">
+          <div class="icon-btn">⋮</div>
+        </div>
+      </div>
+
+      <!-- Chat Body -->
+      <div class="chat-body">
+        <div class="date-divider">
+          <span>TODAY · 09:38</span>
+        </div>
+
+        <!-- AI message -->
+        <div class="msg ai">
+          <span class="ai-tag"><span class="ai-pulse"></span>NEURAL · AI</span>
+          <div class="bubble">
+            مرحباً! أنا جاهز للمساعدة. ماذا تريد أن تفعل اليوم؟
+          </div>
+          <span class="msg-meta">09:38 · 12ms</span>
+        </div>
+
+        <!-- User message -->
+        <div class="msg user">
+          <div class="bubble">
+            أريد تحليل أداء الشبكة العصبية الحالية
+          </div>
+          <span class="msg-meta">09:39</span>
+        </div>
+
+        <!-- AI message with code -->
+        <div class="msg ai">
+          <span class="ai-tag"><span class="ai-pulse"></span>NEURAL · AI</span>
+          <div class="bubble">
+            بالتأكيد. بدأت تشغيل أداة التحليل:
+            <div class="code-block">$ run_analysis --target neural_v3
+  ▶ Loading model weights...  ✓
+  ▶ Scanning 128 layers...    ✓
+  ▶ Benchmarking throughput…</div>
+          </div>
+          <span class="msg-meta">09:39 · 8ms</span>
+        </div>
+
+        <!-- User message -->
+        <div class="msg user">
+          <div class="bubble">
+            ما هي نتائج الاستجابة؟
+          </div>
+          <span class="msg-meta">09:40</span>
+        </div>
+
+        <!-- AI typing -->
+        <div class="msg ai">
+          <span class="ai-tag"><span class="ai-pulse"></span>NEURAL · AI</span>
+          <div class="bubble typing-bubble">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Input -->
+      <div class="chat-input-area">
+        <div class="attach-btn">＋</div>
+        <textarea class="input-box" placeholder="اكتب رسالتك هنا…" rows="1"></textarea>
+        <button class="send-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Bottom Nav -->
+      <div class="bottom-nav">
+        <div class="nav-indicator" style="left: calc(16.6% - 20px)"></div>
+        <div class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+          </svg>
+          محادثة
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          لوحة
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
+          </svg>
+          الملف
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!--        DASHBOARD SCREEN            -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="phone-block">
+    <span class="phone-label">● Dashboard Screen</span>
+    <div class="phone">
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span class="status-time">09:41</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="8" width="3" height="13" rx="1"/><rect x="7" y="5" width="3" height="16" rx="1" opacity=".7"/><rect x="12" y="2" width="3" height="19" rx="1" opacity=".4"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="16" r="2"/><path d="M4.5 10C7.8 6.7 16.2 6.7 19.5 10l-2.1 2.1c-2.3-2.3-8.5-2.3-10.8 0L4.5 10z" opacity=".6"/><path d="M1 6.5C5.7 1.8 18.3 1.8 23 6.5l-2.1 2.1C17.1 4.8 6.9 4.8 3.1 8.6L1 6.5z" opacity=".3"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M20 10h2v4h-2z" opacity=".5"/></svg>
+        </div>
+      </div>
+
+      <!-- App Header -->
+      <div class="app-header">
+        <div class="header-icon">📊</div>
+        <div style="flex:1">
+          <div class="header-title">لوحة التحكم</div>
+          <span class="header-sub">تحديث مباشر · كل 5ث</span>
+        </div>
+        <div class="header-actions">
+          <div class="icon-btn" style="color:var(--accent-green); font-size:8px">●</div>
+          <div class="icon-btn">↻</div>
+        </div>
+      </div>
+
+      <!-- Dashboard Body -->
+      <div class="dash-body">
+
+        <!-- Mini Stats Row -->
+        <div class="stats-row">
+          <div class="stat-mini s1">
+            <div class="stat-val cyan">3.2<span style="font-size:10px">GB</span></div>
+            <div class="stat-lbl">ذاكرة نشطة</div>
+          </div>
+          <div class="stat-mini s2">
+            <div class="stat-val green">7</div>
+            <div class="stat-lbl">أهداف نشطة</div>
+          </div>
+          <div class="stat-mini s3">
+            <div class="stat-val amber">12</div>
+            <div class="stat-lbl">عملية خلفية</div>
+          </div>
+        </div>
+
+        <!-- Memory Card -->
+        <span class="section-label">الذاكرة التراكمية</span>
+        <div class="metric-card cyan">
+          <div class="metric-header">
+            <div class="metric-title-row">
+              <div class="metric-icon cyan">💾</div>
+              <div>
+                <div class="metric-name">استخدام الذاكرة</div>
+                <div class="metric-sub">إجمالي: 8.0 GB</div>
+              </div>
+            </div>
+            <span class="metric-badge badge-cyan">طبيعي</span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-labels">
+              <span>مستخدم</span>
+              <strong class="cyan">3.2 / 8.0 GB</strong>
+            </div>
+            <div class="prog-track">
+              <div class="prog-fill cyan" style="width:40%"></div>
+            </div>
+          </div>
+          <!-- Memory breakdown bar -->
+          <div class="mem-segments">
+            <div class="mem-seg" style="flex:2.1; background:var(--accent-cyan); opacity:0.7"></div>
+            <div class="mem-seg" style="flex:0.8; background:var(--accent-green); opacity:0.7"></div>
+            <div class="mem-seg" style="flex:0.3; background:var(--accent-amber); opacity:0.7"></div>
+            <div class="mem-seg" style="flex:4.8; background:var(--border)"></div>
+          </div>
+          <div class="mem-legend">
+            <div class="mem-legend-item"><div class="leg-dot" style="background:var(--accent-cyan)"></div>نموذج (2.1G)</div>
+            <div class="mem-legend-item"><div class="leg-dot" style="background:var(--accent-green)"></div>سياق (0.8G)</div>
+            <div class="mem-legend-item"><div class="leg-dot" style="background:var(--accent-amber)"></div>مؤقت (0.3G)</div>
+          </div>
+        </div>
+
+        <!-- Goals Card -->
+        <span class="section-label">الأهداف الحالية</span>
+        <div class="metric-card green">
+          <div class="metric-header">
+            <div class="metric-title-row">
+              <div class="metric-icon green">🎯</div>
+              <div>
+                <div class="metric-name">أهداف الذكاء الاصطناعي</div>
+                <div class="metric-sub">7 نشط · 2 معلق</div>
+              </div>
+            </div>
+            <span class="metric-badge badge-green">يعمل</span>
+          </div>
+          <div class="goals-list">
+            <div class="goal-item">
+              <div class="goal-priority high"></div>
+              <div class="goal-info">
+                <div class="goal-name">تحليل مشاعر المحادثة</div>
+                <div class="goal-progress-label">تقدم: 87%</div>
+                <div class="mini-prog"><div class="mini-prog-fill" style="width:87%; background:var(--accent-red)"></div></div>
+              </div>
+              <span class="goal-pct high">87%</span>
+            </div>
+            <div class="goal-item">
+              <div class="goal-priority med"></div>
+              <div class="goal-info">
+                <div class="goal-name">تحسين قاعدة المعرفة</div>
+                <div class="goal-progress-label">تقدم: 54%</div>
+                <div class="mini-prog"><div class="mini-prog-fill" style="width:54%; background:var(--accent-amber)"></div></div>
+              </div>
+              <span class="goal-pct med">54%</span>
+            </div>
+            <div class="goal-item">
+              <div class="goal-priority low"></div>
+              <div class="goal-info">
+                <div class="goal-name">توليد التقارير اليومية</div>
+                <div class="goal-progress-label">تقدم: 23%</div>
+                <div class="mini-prog"><div class="mini-prog-fill" style="width:23%; background:var(--accent-cyan)"></div></div>
+              </div>
+              <span class="goal-pct low">23%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Processes Card -->
+        <span class="section-label">العمليات الخلفية</span>
+        <div class="metric-card amber">
+          <div class="metric-header">
+            <div class="metric-title-row">
+              <div class="metric-icon amber">⚙️</div>
+              <div>
+                <div class="metric-name">العمليات النشطة</div>
+                <div class="metric-sub">12 عملية · CPU 34%</div>
+              </div>
+            </div>
+            <span class="metric-badge badge-amber">34% CPU</span>
+          </div>
+          <div class="process-list">
+            <div class="process-item running">
+              <div class="process-status-icon running"><span class="spin">↻</span></div>
+              <div class="process-info">
+                <div class="process-name">neural_inference.exe</div>
+                <div class="process-detail">thread: 0x4A2F · mem: 512MB</div>
+              </div>
+              <div class="process-meta">
+                <div class="process-time" style="color:var(--accent-green)">● يعمل</div>
+                <div class="process-time">4m 32s</div>
+              </div>
+            </div>
+            <div class="process-item running">
+              <div class="process-status-icon running"><span class="spin">↻</span></div>
+              <div class="process-info">
+                <div class="process-name">context_manager.bin</div>
+                <div class="process-detail">thread: 0x3B1A · mem: 128MB</div>
+              </div>
+              <div class="process-meta">
+                <div class="process-time" style="color:var(--accent-green)">● يعمل</div>
+                <div class="process-time">12m 05s</div>
+              </div>
+            </div>
+            <div class="process-item pending">
+              <div class="process-status-icon pending">⏸</div>
+              <div class="process-info">
+                <div class="process-name">knowledge_sync.task</div>
+                <div class="process-detail">thread: idle · mem: 64MB</div>
+              </div>
+              <div class="process-meta">
+                <div class="process-time" style="color:var(--accent-amber)">⏳ معلق</div>
+                <div class="process-time">في قائمة</div>
+              </div>
+            </div>
+            <div class="process-item error">
+              <div class="process-status-icon error">✕</div>
+              <div class="process-info">
+                <div class="process-name">ext_api_connector</div>
+                <div class="process-detail">ERR: timeout · retry 3/5</div>
+              </div>
+              <div class="process-meta">
+                <div class="process-time" style="color:var(--accent-red)">✕ خطأ</div>
+                <div class="process-time">يعيد</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Nav -->
+      <div class="bottom-nav">
+        <div class="nav-indicator" style="left: calc(50% - 20px)"></div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+          </svg>
+          محادثة
+        </div>
+        <div class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          لوحة
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
+          </svg>
+          الملف
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── FLUTTER CODE SNIPPETS ─── -->
+<div class="code-section">
+  <h3>// Flutter Implementation</h3>
+  <div class="code-tabs">
+    <div class="code-tab active">theme.dart</div>
+    <div class="code-tab">chat_screen.dart</div>
+    <div class="code-tab">dashboard_screen.dart</div>
+  </div>
+  <div class="code-box"><span class="cm">// ─── NeuralCore Dark Theme ───────────────────────────</span>
+
+<span class="kw">import</span> <span class="st">'package:flutter/material.dart'</span>;
+
+<span class="kw">class</span> <span class="cl">AppTheme</span> {
+  <span class="kw">static const</span> Color bgDeep    = Color(<span class="nm">0xFF080B10</span>);
+  <span class="kw">static const</span> Color bgCard    = Color(<span class="nm">0xFF0D1117</span>);
+  <span class="kw">static const</span> Color bgSurface = Color(<span class="nm">0xFF111820</span>);
+  <span class="kw">static const</span> Color accentCyan = Color(<span class="nm">0xFF00D4FF</span>);
+  <span class="kw">static const</span> Color accentGreen = Color(<span class="nm">0xFF00FF9D</span>);
+  <span class="kw">static const</span> Color accentAmber = Color(<span class="nm">0xFFFFB340</span>);
+  <span class="kw">static const</span> Color accentRed   = Color(<span class="nm">0xFFFF4560</span>);
+  <span class="kw">static const</span> Color border     = Color(<span class="nm">0xFF1E2D3D</span>);
+
+  <span class="kw">static</span> <span class="cl">ThemeData</span> <span class="fn">darkTheme</span>() => <span class="cl">ThemeData</span>(
+    brightness: <span class="cl">Brightness</span>.dark,
+    scaffoldBackgroundColor: bgDeep,
+    colorScheme: <span class="kw">const</span> <span class="cl">ColorScheme</span>.dark(
+      primary: accentCyan,
+      secondary: accentGreen,
+      surface: bgCard,
+      background: bgDeep,
+    ),
+    fontFamily: <span class="st">'Tajawal'</span>,
+    appBarTheme: <span class="kw">const</span> <span class="cl">AppBarTheme</span>(
+      backgroundColor: bgCard,
+      elevation: <span class="nm">0</span>,
+      titleTextStyle: <span class="cl">TextStyle</span>(
+        fontFamily: <span class="st">'Tajawal'</span>,
+        fontWeight: <span class="cl">FontWeight</span>.w700,
+        fontSize: <span class="nm">16</span>,
+        color: Color(<span class="nm">0xFFE8F0FE</span>),
+      ),
+    ),
+    cardTheme: <span class="cl">CardTheme</span>(
+      color: bgSurface,
+      shape: <span class="cl">RoundedRectangleBorder</span>(
+        borderRadius: <span class="cl">BorderRadius</span>.circular(<span class="nm">14</span>),
+        side: <span class="kw">const</span> <span class="cl">BorderSide</span>(color: border),
+      ),
+    ),
+  );
+}</div>
+</div>
+
+</body>
+</html>
