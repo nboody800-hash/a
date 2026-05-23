@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Agent — API Docs</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Tajawal:wght@300;400;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --border: #1e2330;
+    --accent: #00e5a0;
+    --accent2: #0077ff;
+    --warn: #ff6b35;
+    --text: #dde3f0;
+    --muted: #5a6278;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Tajawal', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,160,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,160,.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
+
+  /* Header */
+  header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: grid; place-items: center;
+    font-size: 22px; flex-shrink: 0;
+    box-shadow: 0 0 24px rgba(0,229,160,.3);
+  }
+  header h1 { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.5px; }
+  header p { color: var(--muted); font-size: .95rem; margin-top: 2px; }
+  .badge {
+    margin-right: auto;
+    background: rgba(0,229,160,.12);
+    color: var(--accent);
+    border: 1px solid rgba(0,229,160,.3);
+    padding: 4px 12px; border-radius: 20px;
+    font-family: var(--mono); font-size: .78rem;
+  }
+
+  /* Section */
+  .section-title {
+    font-size: .7rem; font-family: var(--mono);
+    color: var(--muted); letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+
+  /* Endpoint cards */
+  .endpoint {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .endpoint:hover { border-color: rgba(0,229,160,.25); }
+
+  .ep-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .method {
+    font-family: var(--mono); font-size: .78rem; font-weight: 600;
+    padding: 4px 10px; border-radius: 6px; flex-shrink: 0;
+  }
+  .method.post { background: rgba(0,119,255,.2); color: #60aaff; border: 1px solid rgba(0,119,255,.3); }
+  .method.get  { background: rgba(0,229,160,.15); color: var(--accent); border: 1px solid rgba(0,229,160,.25); }
+  .method.del  { background: rgba(255,107,53,.15); color: var(--warn); border: 1px solid rgba(255,107,53,.25); }
+
+  .ep-path { font-family: var(--mono); font-size: 1rem; color: var(--text); }
+  .ep-desc { color: var(--muted); font-size: .88rem; margin-right: auto; }
+  .chevron { color: var(--muted); transition: transform .3s; font-size: .8rem; }
+  .endpoint.open .chevron { transform: rotate(180deg); }
+
+  .ep-body {
+    display: none; padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .endpoint.open .ep-body { display: block; }
+
+  /* Fields */
+  .field-group { margin-top: 16px; }
+  .field-label {
+    font-size: .75rem; font-family: var(--mono);
+    color: var(--muted); letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 6px;
+    display: block;
+  }
+  input, textarea, select {
+    width: 100%; background: #0d0f14;
+    border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text); font-family: var(--mono); font-size: .88rem;
+    padding: 10px 14px; resize: vertical;
+    outline: none; transition: border-color .2s;
+  }
+  input:focus, textarea:focus { border-color: var(--accent); }
+  .checkbox-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+  .checkbox-row input { width: auto; }
+  .checkbox-row label { font-size: .88rem; color: var(--muted); cursor: pointer; }
+
+  /* Send button */
+  .btn-send {
+    margin-top: 16px;
+    background: linear-gradient(135deg, var(--accent), #00c07a);
+    color: #000; font-family: var(--sans);
+    font-weight: 700; font-size: .9rem;
+    padding: 10px 24px; border: none;
+    border-radius: 8px; cursor: pointer;
+    transition: opacity .2s, transform .1s;
+  }
+  .btn-send:hover { opacity: .9; }
+  .btn-send:active { transform: scale(.98); }
+  .btn-send:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* Response */
+  .response-box {
+    margin-top: 16px;
+    background: #070809;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    font-family: var(--mono); font-size: .82rem;
+    white-space: pre-wrap; word-break: break-all;
+    max-height: 320px; overflow-y: auto;
+    display: none;
+  }
+  .response-box.show { display: block; }
+  .resp-status { font-size: .75rem; margin-bottom: 8px; }
+  .resp-status.ok { color: var(--accent); }
+  .resp-status.err { color: var(--warn); }
+  .resp-body { color: #a0b0c8; }
+
+  /* Base URL banner */
+  .base-url-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 18px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 32px;
+  }
+  .base-url-box span { color: var(--muted); font-size: .85rem; flex-shrink: 0; }
+  .base-url-box input {
+    flex: 1; background: transparent; border: none;
+    font-family: var(--mono); font-size: .9rem; color: var(--accent);
+    padding: 0;
+  }
+  .base-url-box input:focus { outline: none; }
+
+  /* Status indicator */
+  .ping-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--muted); flex-shrink: 0;
+    transition: background .3s;
+  }
+  .ping-dot.online { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  .ping-dot.offline { background: var(--warn); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="logo">🤖</div>
+    <div>
+      <h1>AI Agent Backend</h1>
+      <p>توثيق نقاط الاتصال — FastAPI Server</p>
+    </div>
+    <span class="badge">v1.0.0</span>
+  </header>
+
+  <!-- Base URL -->
+  <div class="section-title">عنوان السيرفر</div>
+  <div class="base-url-box">
+    <div class="ping-dot" id="pingDot"></div>
+    <span>Base URL</span>
+    <input id="baseUrl" value="http://localhost:8000" />
+    <button class="btn-send" style="margin:0;padding:6px 14px;font-size:.8rem" onclick="pingServer()">اختبار ↗</button>
+  </div>
+
+  <!-- Endpoints -->
+  <div class="section-title">نقاط الاتصال</div>
+
+  <!-- /chat -->
+  <div class="endpoint" id="ep-chat">
+    <div class="ep-header" onclick="toggle('ep-chat')">
+      <span class="method post">POST</span>
+      <span class="ep-path">/chat</span>
+      <span class="ep-desc">إرسال رسالة واستقبال رد من العميل الذكي</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="ep-body">
+      <div class="field-group">
+        <label class="field-label">message *</label>
+        <textarea id="chat-message" rows="3" placeholder="اكتب رسالتك هنا..."></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">session_id (اختياري)</label>
+        <input id="chat-session" placeholder="اتركه فارغاً لإنشاء جلسة جديدة" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">system_prompt (اختياري)</label>
+        <input id="chat-system" placeholder="You are a helpful AI assistant." />
+      </div>
+      <button class="btn-send" onclick="sendChat()">إرسال الطلب →</button>
+      <div class="response-box" id="chat-resp">
+        <div class="resp-status" id="chat-status"></div>
+        <div class="resp-body" id="chat-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- /status -->
+  <div class="endpoint" id="ep-status">
+    <div class="ep-header" onclick="toggle('ep-status')">
+      <span class="method get">GET</span>
+      <span class="ep-path">/status</span>
+      <span class="ep-desc">مراقبة حالة السيرفر ومستوى العميل</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="ep-body">
+      <p style="color:var(--muted);font-size:.88rem;margin-top:12px">لا يحتاج هذا الطلب إلى معاملات. يُرجع معلومات الحالة الفورية.</p>
+      <button class="btn-send" onclick="sendStatus()">جلب الحالة →</button>
+      <div class="response-box" id="status-resp">
+        <div class="resp-status" id="status-status"></div>
+        <div class="resp-body" id="status-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- /browse -->
+  <div class="endpoint" id="ep-browse">
+    <div class="ep-header" onclick="toggle('ep-browse')">
+      <span class="method post">POST</span>
+      <span class="ep-path">/browse</span>
+      <span class="ep-desc">تصفح رابط واستخراج محتواه النصي</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="ep-body">
+      <div class="field-group">
+        <label class="field-label">url *</label>
+        <input id="browse-url" placeholder="https://example.com" />
+      </div>
+      <div class="field-group" style="margin-top:12px">
+        <div class="checkbox-row">
+          <input type="checkbox" id="browse-links" />
+          <label for="browse-links">extract_links — استخرج الروابط من الصفحة</label>
+        </div>
+        <div class="checkbox-row" style="margin-top:6px">
+          <input type="checkbox" id="browse-summarize" checked />
+          <label for="browse-summarize">summarize — تلخيص المحتوى</label>
+        </div>
+      </div>
+      <button class="btn-send" onclick="sendBrowse()">تصفح الرابط →</button>
+      <div class="response-box" id="browse-resp">
+        <div class="resp-status" id="browse-status"></div>
+        <div class="resp-body" id="browse-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- /chat/history -->
+  <div class="endpoint" id="ep-history">
+    <div class="ep-header" onclick="toggle('ep-history')">
+      <span class="method get">GET</span>
+      <span class="ep-path">/chat/history/{session_id}</span>
+      <span class="ep-desc">استرجاع سجل المحادثة لجلسة معينة</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="ep-body">
+      <div class="field-group">
+        <label class="field-label">session_id *</label>
+        <input id="hist-session" placeholder="أدخل معرّف الجلسة" />
+      </div>
+      <button class="btn-send" onclick="sendHistory()">جلب السجل →</button>
+      <div class="response-box" id="hist-resp">
+        <div class="resp-status" id="hist-status"></div>
+        <div class="resp-body" id="hist-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- /chat/reset -->
+  <div class="endpoint" id="ep-reset">
+    <div class="ep-header" onclick="toggle('ep-reset')">
+      <span class="method del">DELETE</span>
+      <span class="ep-path">/chat/reset/{session_id}</span>
+      <span class="ep-desc">مسح ذاكرة جلسة محادثة</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="ep-body">
+      <div class="field-group">
+        <label class="field-label">session_id *</label>
+        <input id="reset-session" placeholder="أدخل معرّف الجلسة للمسح" />
+      </div>
+      <button class="btn-send" style="background:linear-gradient(135deg,var(--warn),#e04000)" onclick="sendReset()">مسح الجلسة →</button>
+      <div class="response-box" id="reset-resp">
+        <div class="resp-status" id="reset-status"></div>
+        <div class="resp-body" id="reset-body"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function base() { return document.getElementById('baseUrl').value.replace(/\/$/, ''); }
+
+function toggle(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+function showResp(prefix, ok, data) {
+  const box = document.getElementById(prefix + '-resp');
+  const statusEl = document.getElementById(prefix + '-status');
+  const bodyEl = document.getElementById(prefix + '-body');
+  box.classList.add('show');
+  statusEl.className = 'resp-status ' + (ok ? 'ok' : 'err');
+  statusEl.textContent = ok ? '✓ 200 OK' : '✗ Error';
+  bodyEl.textContent = JSON.stringify(data, null, 2);
+}
+
+async function pingServer() {
+  const dot = document.getElementById('pingDot');
+  try {
+    const r = await fetch(base() + '/status');
+    dot.className = 'ping-dot ' + (r.ok ? 'online' : 'offline');
+  } catch { dot.className = 'ping-dot offline'; }
+}
+
+async function sendChat() {
+  const btn = event.target; btn.disabled = true;
+  const body = {
+    message: document.getElementById('chat-message').value,
+    session_id: document.getElementById('chat-session').value || undefined,
+    system_prompt: document.getElementById('chat-system').value || undefined,
+  };
+  try {
+    const r = await fetch(base() + '/chat', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    const d = await r.json();
+    if (d.session_id) document.getElementById('chat-session').value = d.session_id;
+    showResp('chat', r.ok, d);
+  } catch(e) { showResp('chat', false, {error: e.message}); }
+  btn.disabled = false;
+}
+
+async function sendStatus() {
+  try {
+    const r = await fetch(base() + '/status');
+    showResp('status', r.ok, await r.json());
+  } catch(e) { showResp('status', false, {error: e.message}); }
+}
+
+async function sendBrowse() {
+  const btn = event.target; btn.disabled = true;
+  const body = {
+    url: document.getElementById('browse-url').value,
+    extract_links: document.getElementById('browse-links').checked,
+    summarize: document.getElementById('browse-summarize').checked,
+  };
+  try {
+    const r = await fetch(base() + '/browse', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    showResp('browse', r.ok, await r.json());
+  } catch(e) { showResp('browse', false, {error: e.message}); }
+  btn.disabled = false;
+}
+
+async function sendHistory() {
+  const sid = document.getElementById('hist-session').value;
+  if (!sid) return;
+  try {
+    const r = await fetch(base() + '/chat/history/' + encodeURIComponent(sid));
+    showResp('hist', r.ok, await r.json());
+  } catch(e) { showResp('hist', false, {error: e.message}); }
+}
+
+async function sendReset() {
+  const sid = document.getElementById('reset-session').value;
+  if (!sid) return;
+  try {
+    const r = await fetch(base() + '/chat/reset/' + encodeURIComponent(sid), {method:'DELETE'});
+    showResp('reset', r.ok, await r.json());
+  } catch(e) { showResp('reset', false, {error: e.message}); }
+}
+
+// Auto-ping on load
+pingServer();
+// Open first endpoint by default
+document.getElementById('ep-chat').classList.add('open');
+</script>
+</body>
+</html>
