@@ -1,215 +1,30 @@
-import 'package:flutter/material.dart';
+name: Build Flutter APK
 
-void main() {
-  runApp(const CyberAgentApp());
-}
+on:
+  push:
+    branches: [ main ]
 
-class CyberAgentApp extends StatelessWidget {
-  const CyberAgentApp({super.key});
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'AI Control Interface',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF080B10),
-        fontFamily: 'monospace',
-      ),
-      home: const MainDashboard(),
-    );
-  }
-}
+    steps:
+      - uses: actions/checkout@v4
 
-class MainDashboard extends StatefulWidget {
-  const MainDashboard({super.key});
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-  @override
-  State<MainDashboard> createState() => _MainDashboardState();
-}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
 
-class _MainDashboardState extends State<MainDashboard> {
-  int _currentIndex = 0;
+      - run: flutter pub get
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF0D1117),
-        elevation: 0,
-        title: const Text(
-          'CYBER AGENT CORE v1.0.0',
-          style: TextStyle(
-            color: Color(0xFF00D4FF),
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.circle, color: Color(0xFF00FF9D), size: 14),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: _currentIndex == 0 ? const TerminalTab() : const SettingsTab(),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF0D1117),
-        selectedItemColor: const Color(0xFF00D4FF),
-        unselectedItemColor: const Color(0xFF7A8FA6),
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.terminal),
-            label: 'التحكم والتيرمنال',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_ethernet),
-            label: 'الحالة والإعدادات',
-          ),
-        ],
-      ),
-    );
-  }
-}
+      - run: flutter build apk --release
 
-class TerminalTab extends StatefulWidget {           // ✅ تغيير إلى StatefulWidget
-  const TerminalTab({super.key});
-
-  @override
-  State<TerminalTab> createState() => _TerminalTabState();
-}
-
-class _TerminalTabState extends State<TerminalTab> {
-  final TextEditingController _controller = TextEditingController(); // ✅ إضافة controller
-  final List<String> _lines = [                                      // ✅ قائمة للسطور
-    '# root@cyber_agent:~',
-    '# initialization completed...',
-    '# loading vector db (ChromaDB)...',
-    '# tor scraper network: READY',
-    '# system waiting for autonomous decisions...',
-  ];
-
-  void _sendCommand() {                                              // ✅ منطق الإرسال
-    final cmd = _controller.text.trim();
-    if (cmd.isEmpty) return;
-    setState(() {
-      _lines.add('> $cmd');
-    });
-    _controller.clear();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();                                           // ✅ تنظيف الـ controller
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0D1117),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFF1E2D3D)),   // ✅ حذف const المكرر
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.memory, color: Color(0xFFFFB340)),
-                SizedBox(width: 10),
-                Text(
-                  'SYSTEM: ALL CORES OPERATIONAL',
-                  style: TextStyle(
-                    color: Color(0xFFE8F0FE),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF111820),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color(0xFF1A3A5C)),
-              ),
-              child: SingleChildScrollView(                          // ✅ حذف const لأن المحتوى ديناميكي
-                child: Text(
-                  _lines.join('\n'),
-                  style: const TextStyle(
-                    color: Color(0xFF00FF9D),
-                    fontFamily: 'monospace',
-                    height: 1.5,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _controller,                           // ✅ ربط الـ controller
-                  onSubmitted: (_) => _sendCommand(),               // ✅ إرسال بـ Enter
-                  decoration: InputDecoration(
-                    hintText: 'أدخل الأمر للعميل المستقل...',
-                    hintStyle: const TextStyle(color: Color(0xFF3A4F65)),
-                    fillColor: const Color(0xFF0D1117),
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFF1E2D3D)),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFF00D4FF)),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              CircleAvatar(
-                backgroundColor: const Color(0xFF00D4FF),
-                child: IconButton(
-                  icon: const Icon(Icons.send, color: Colors.black),
-                  onPressed: _sendCommand,                           // ✅ ربط الزر بالدالة
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SettingsTab extends StatelessWidget {
-  const SettingsTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'إعدادات العميل الذكي متصلة بالخادم الخلفي',
-        style: TextStyle(color: Color(0xFF7A8FA6), fontSize: 16),
-      ),
-    );
-  }
-}
+      - uses: actions/upload-artifact@v4   # ✅ v4 وليس v3
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
