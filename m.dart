@@ -79,8 +79,37 @@ class _MainDashboardState extends State<MainDashboard> {
   }
 }
 
-class TerminalTab extends StatelessWidget {
+class TerminalTab extends StatefulWidget {           // ✅ تغيير إلى StatefulWidget
   const TerminalTab({super.key});
+
+  @override
+  State<TerminalTab> createState() => _TerminalTabState();
+}
+
+class _TerminalTabState extends State<TerminalTab> {
+  final TextEditingController _controller = TextEditingController(); // ✅ إضافة controller
+  final List<String> _lines = [                                      // ✅ قائمة للسطور
+    '# root@cyber_agent:~',
+    '# initialization completed...',
+    '# loading vector db (ChromaDB)...',
+    '# tor scraper network: READY',
+    '# system waiting for autonomous decisions...',
+  ];
+
+  void _sendCommand() {                                              // ✅ منطق الإرسال
+    final cmd = _controller.text.trim();
+    if (cmd.isEmpty) return;
+    setState(() {
+      _lines.add('> $cmd');
+    });
+    _controller.clear();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();                                           // ✅ تنظيف الـ controller
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +123,7 @@ class TerminalTab extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFF0D1117),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFF1E2D3D)),
+              border: Border.all(color: const Color(0xFF1E2D3D)),   // ✅ حذف const المكرر
             ),
             child: const Row(
               children: [
@@ -102,7 +131,10 @@ class TerminalTab extends StatelessWidget {
                 SizedBox(width: 10),
                 Text(
                   'SYSTEM: ALL CORES OPERATIONAL',
-                  style: TextStyle(color: Color(0xFFE8F0FE), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Color(0xFFE8F0FE),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -117,10 +149,10 @@ class TerminalTab extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: const Color(0xFF1A3A5C)),
               ),
-              child: const SingleChildScrollView(
+              child: SingleChildScrollView(                          // ✅ حذف const لأن المحتوى ديناميكي
                 child: Text(
-                  '# root@cyber_agent:~ \n# initialization completed...\n# loading vector db (ChromaDB)...\n# tor scraper network: READY\n# system waiting for autonomous decisions...',
-                  style: TextStyle(
+                  _lines.join('\n'),
+                  style: const TextStyle(
                     color: Color(0xFF00FF9D),
                     fontFamily: 'monospace',
                     height: 1.5,
@@ -134,17 +166,19 @@ class TerminalTab extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
+                  controller: _controller,                           // ✅ ربط الـ controller
+                  onSubmitted: (_) => _sendCommand(),               // ✅ إرسال بـ Enter
                   decoration: InputDecoration(
                     hintText: 'أدخل الأمر للعميل المستقل...',
                     hintStyle: const TextStyle(color: Color(0xFF3A4F65)),
                     fillColor: const Color(0xFF0D1117),
                     filled: true,
                     enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: const Color(0xFF1E2D3D)),
+                      borderSide: const BorderSide(color: Color(0xFF1E2D3D)),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: const Color(0xFF00D4FF)),
+                      borderSide: const BorderSide(color: Color(0xFF00D4FF)),
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
@@ -155,7 +189,7 @@ class TerminalTab extends StatelessWidget {
                 backgroundColor: const Color(0xFF00D4FF),
                 child: IconButton(
                   icon: const Icon(Icons.send, color: Colors.black),
-                  onPressed: () {},
+                  onPressed: _sendCommand,                           // ✅ ربط الزر بالدالة
                 ),
               ),
             ],
@@ -179,4 +213,3 @@ class SettingsTab extends StatelessWidget {
     );
   }
 }
-
