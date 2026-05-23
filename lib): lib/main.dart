@@ -35,7 +35,7 @@ class _MainDashboardState extends State<MainDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      app_bar: AppBar(
+      appBar: AppBar(
         backgroundColor: const Color(0xFF0D1117),
         elevation: 0,
         title: const Text(
@@ -129,53 +129,3 @@ class TerminalTab extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'أدخل الأمر للعميل المستقل...',
-                    hintStyle: const TextStyle(color: Color(0xFF3A4F65)),
-                    fillColor: const Color(0xFF0D1117),
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: const Color(0xFF1E2D3D)),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: const Color(0xFF00D4FF)),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              CircleAvatar(
-                backgroundColor: const Color(0xFF00D4FF),
-                child: IconButton(
-                  icon: const Icon(Icons.send, color: Colors.black),
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SettingsTab extends StatelessWidget {
-  const SettingsTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'إعدادات العميل الذكي متصلة بالخادم الخلفي',
-        style: TextStyle(color: Color(0xFF7A8FA6), fontSize: 16),
-      ),
-    );
-  }
-}
