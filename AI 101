@@ -1,0 +1,132 @@
+Enter<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuralCore AI</title>
+<style>
+:root{--bg:#080E14;--panel:#0D1520;--accent:#00D4FF;--bot:#142233;--user:#1A365D;--green:#00FF9D}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:#E8F0FE;font-family:Segoe UI;padding:12px;display:flex;flex-direction:column;gap:14px}
+.header{text-align:center;padding:8px 0}
+.subtitle{color:var(--accent);font-size:11px;letter-spacing:2px;font-weight:bold}
+.title{font-size:22px;font-weight:600;margin-top:4px}
+.chat-card{background:var(--panel);border-radius:20px;border:1px solid #1E2D42;display:flex;flex-direction:column;height:400px;box-shadow:0 8px 24px rgba(0,0,0,0.5);overflow:hidden}
+.chat-header{padding:12px 16px;border-bottom:1px solid #1E2D42;display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;background:rgba(0,212,255,0.1);border:1px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px}
+.online{font-size:11px;color:var(--green)}
+.chat-body{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.bubble{max-width:80%;padding:11px 15px;border-radius:16px;font-size:14px;line-height:1.5;word-wrap:break-word}
+.bot-b{background:var(--bot);align-self:flex-start;border-bottom-right-radius:4px;border:1px solid #1C2F47}
+.user-b{background:var(--user);align-self:flex-end;border-bottom-left-radius:4px;border:1px solid #244A80}
+.sys-msg{color:#FFB340;font-family:monospace;font-size:12px;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;border-right:2px solid #FFB340}
+.err-msg{color:#FF5252;font-family:monospace;font-size:12px;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;border-right:2px solid #FF5252}
+.input-row{display:flex;padding:10px;gap:8px;background:rgba(0,0,0,0.2)}
+.input-row input{flex:1;background:#090F17;border:1px solid #1E2D42;color:white;padding:13px;border-radius:12px;font-size:14px;outline:none}
+.input-row input:focus{border-color:var(--accent)}
+.input-row button{background:var(--accent);color:#000;border:none;padding:0 20px;border-radius:12px;font-weight:bold;cursor:pointer}
+.dash{background:var(--panel);border-radius:20px;border:1px solid #1E2D42;padding:14px}
+.dash-title{font-size:13px;color:#8A99AD;margin-bottom:12px;font-weight:bold}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#090F17;padding:12px;border-radius:12px;border:1px solid #152233;text-align:center}
+.stat-label{font-size:11px;color:#8A99AD}
+.stat-val{font-size:17px;font-weight:bold;color:var(--accent);margin-top:4px}
+.prog-box{margin-top:10px;background:#090F17;padding:10px;border-radius:12px}
+.prog-bar{height:6px;background:#152233;border-radius:3px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));width:87%;transition:width 0.5s}
+.prog-labels{display:flex;justify-content:space-between;font-size:11px}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="subtitle">FLUTTER UI KIT • DARK THEME</div>
+<div class="title">واجهة تطبيق الذكاء الاصطناعي</div>
+</div>
+<div class="chat-card">
+<div class="chat-header">
+<div class="avatar">🤖</div>
+<div>
+<div style="font-weight:bold;font-size:14px">NeuralCore AI</div>
+<div class="online">● ONLINE • v1.5.1</div>
+</div>
+</div>
+<div class="chat-body" id="chat">
+<div class="bubble bot-b">مرحباً يا مهندس مهند! أنا جاهز للمساعدة!</div>
+</div>
+<div class="input-row">
+<input id="inp" placeholder="اكتب رسالتك هنا..." onkeypress="if(event.key==='Enter')send()">
+<button onclick="send()">إرسال</button>
+</div>
+</div>
+<div class="dash">
+<div class="dash-title">📊 لوحة التحكم والمراقبة الذكية</div>
+<div class="grid">
+<div class="stat"><div class="stat-label">حالة الحماية</div><div class="stat-val" style="color:var(--green)">نشطة 🛡️</div></div>
+<div class="stat"><div class="stat-label">عدد الرسائل</div><div class="stat-val" id="msgCount">0</div></div>
+</div>
+<div class="prog-box">
+<div class="prog-labels"><span>تحليل مشاعر المحادثة</span><span style="color:var(--accent)" id="sentPct">87% إيجابي</span></div>
+<div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+</div>
+</div>
+<script>
+let msgCount=0;
+async function send(){
+  const inp=document.getElementById('inp');
+  const chat=document.getElementById('chat');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  msgCount++;
+  document.getElementById('msgCount').textContent=msgCount;
+  chat.innerHTML+=`<div class="bubble user-b">${txt}</div>`;
+  inp.value='';
+  const wid='w'+Date.now();
+  chat.innerHTML+=`<div class="sys-msg" id="${wid}">⚡ جاري المعالجة...</div>`;
+  chat.scrollTop=chat.scrollHeight;
+  try{
+    const res=await fetch('/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:txt})});
+    const data=await res.json();
+    document.getElementById(wid).remove();
+    chat.innerHTML+=`<div class="bubble bot-b">${data.reply}</div>`;
+    const pct=Math.floor(75+Math.random()*20);
+    document.getElementById('sentPct').textContent=pct+'% إيجابي';
+    document.getElementById('progFill').style.width=pct+'%';
+  }catch(e){
+    document.getElementById(wid).remove();
+    chat.innerHTML+=`<div class="err-msg">❌ خطأ: ${e}</div>`;
+  }
+  chat.scrollTop=chat.scrollHeight;
+}
+</script>
+</body>
+</html>
+from flask import Flask, request, jsonify
+import requests
+
+app = Flask(__name__)
+
+GEMINI_KEY = "AIzaSyAngqkaM-uQ1_NssO3-KU2g6PIhrfb4oyk"
+
+@app.route('/')
+def home():
+    with open('index.html', 'r', encoding='utf-8') as f:
+        return f.read()
+
+@app.route('/ask', methods=['POST'])
+def ask():
+    user_prompt = request.json.get('prompt', '')
+    try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={GEMINI_KEY}"
+        body = {"contents": [{"parts": [{"text": user_prompt}]}]}
+        r = requests.post(url, json=body, timeout=30)
+        data = r.json()
+        if "candidates" in data:
+            reply = data["candidates"][0]["content"]["parts"][0]["text"]
+        else:
+            reply = str(data)
+        return jsonify({"reply": reply})
+    except Exception as e:
+        return jsonify({"reply": f"خطأ: {str(e)}"})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000, debug=False)
